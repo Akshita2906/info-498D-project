@@ -11,7 +11,7 @@ View(BRFSS_all_data)
 #--------------------------------------Health Care Access -------------------------------------------------------
 
 #Picking up columns of choice
-vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state")
+vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state", "x.llcpwt")
 HCA_data <- BRFSS_all_data[vars]
 #unique(HCA_data$x.rfhlth)
 
@@ -134,4 +134,24 @@ H_AC <- svyby(~cvdcrhd4, ~x.state, srvey_coro, svymean, na.rm=TRUE)
 df_states_heart_AC<-data.frame("Adults with Diagnosed Angial/Coronary Issues By State",H_AC[1], H_AC[2]*100, stringsAsFactors = FALSE)
 names(df_states_heart_AC)<-c("Metric","State", "Value")
 
-#-----------------------------------------------------------------------------------------------------------------
+#---------------------------------------------Obesity--------------------------------------------------------------------
+#Picking up columns of choice
+vars <- c("x.rfbmi5", "x.state", "x.llcpwt")
+obese_data <- BRFSS_all_data[vars]
+#unique(HCA_data$x.rfhlth)
+
+#Converting the values into yes and no. Setting defaults for x.rfbmi5 column
+obese_data$x.rfbmi5 <- replace(obese_data$x.rfbmi5, obese_data$x.rfbmi5==1,0)
+obese_data$x.rfbmi5 <- replace(obese_data$x.rfbmi5, obese_data$x.rfbmi5==2,1)
+obese_data$x.rfbmi5 <- replace(obese_data$x.rfbmi5, obese_data$x.rfbmi5==9,NA)
+
+
+#Survey weights for x.rfbmi5 column
+svey <- svydesign(ids=~1 ,strata=obese_data$x.rfbmi5, weights=obese_data$x.llcpwt, nest=T, data=obese_data)
+svey_mean <- svymean(~x.rfbmi5, svey, na.rm=TRUE)
+
+#Storing the results into a dataframe for further use
+df_results[nrow(df_results) + 1,] = c("Adults with obesity", svey_mean[1]*100)
+Z <- svyby(~x.rfbmi5, ~x.state, svey, svymean, na.rm=TRUE)
+df_states<-data.frame("Adults with Obesity",Z[1], Z[2]*100, stringsAsFactors = FALSE)
+names(df_states)<-c("Metric","State", "Value")

@@ -155,3 +155,104 @@ df_results[nrow(df_results) + 1,] = c("Adults with obesity", svey_mean[1]*100)
 Z <- svyby(~x.rfbmi5, ~x.state, svey, svymean, na.rm=TRUE)
 df_states<-data.frame("Adults with Obesity",Z[1], Z[2]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
+
+#---------------------------------------------Diabetes--------------------------------------------------------------------
+
+#Picking up columns of choice
+vars<- c("diabete3", "diabage2", "pdiabtst", "prediab1", "x.state", "x.llcpwt")
+diab_data <- BRFSS_all_data[vars]
+
+#Converting the values into yes and no. Setting the defaults
+
+diab_data$diabete3[diab_data$diabete3==3] <- 0
+diab_data$diabete3[diab_data$diabete3==4] <- 0
+diab_data$diabete3[diab_data$diabete3==7] <- 0
+diab_data$diabete3[diab_data$diabete3==9] <- 0
+
+diab_data$diabage2[diab_data$diabage2==98] <- 0
+diab_data$diabage2[diab_data$diabage2==99] <- 0
+
+diab_data$prediab1[diab_data$prediab1==3] <- 0
+diab_data$prediab1[diab_data$prediab1==7] <- 0
+diab_data$prediab1[diab_data$prediab1==9] <- 0
+
+#Survey weights
+svey_daibete3 <- svydesign(ids=~1 ,strata=diab_data$diabete3, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
+svey_mean_daibete3 <- svymean(~diabete3, svey_daibete3, na.rm=TRUE)
+
+svey_diabage2 <- svydesign(ids=~1 ,strata=diab_data$diabage2, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
+svey_mean_diabage2 <- svymean(~diabage2, svey_diabage2, na.rm=TRUE)
+
+svey_prediab <- svydesign(ids=~1 ,strata=diab_data$prediab1, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
+svey_mean_prediab <- svymean(~prediab1, svey_prediab, na.rm=TRUE)
+
+weighted_stats_diab <- c(svey_mean_daibete3*100,svey_mean_prediab*100)
+net_means_diabetes <- data.frame(Diabetes = c("Diabetes","Pre-diabetes"), Weighted = weighted_stats_diab)
+
+#Wrangling into state-wise weights for diabete3 
+
+S1 <- svyby(~diabete3, ~x.state, svey_daibete3, svymean, na.rm=TRUE)
+df_states_diabetes<-data.frame("Adults with Diabetes by state",S1[1], S1[2]*100, stringsAsFactors = FALSE)
+names(df_states_diabetes)<-c("Metric","State", "Value")
+
+State_name <- c("Alabama",
+            "Alaska", 
+            "Arizona", 
+            "Arkansas",
+            "California", 
+            "Colorado", 
+            "Connecticut",
+            "Delaware", 
+            "District of Columbia",
+            "Florida",
+            "Georgia", 
+            "Hawaii", 
+            "Idaho", 
+            "Illinois",
+            "Indiana",
+            "Iowa", 
+            "Kansas", 
+            "Kentucky", 
+            "Louisiana",
+            "Maine", 
+            "Maryland", 
+            "Massachusetts", 
+            "Michigan", 
+            "Minnesota", 
+            "Mississippi", 
+            "Missouri", 
+            "Montana",
+            "Nebraska", 
+            "Nevada", 
+            "New Hampshire", 
+            "New Jersey", 
+            "New Mexico", 
+            "New York", 
+            "North Carolina", 
+            "North Dakota", 
+            "Ohio",
+            "Oklahoma",
+            "Oregon", 
+            "Pennsylvania",
+            "Rhode Island",
+            "South Carolina", 
+            "South Dakota", 
+            "Tennessee", 
+            "Texas", 
+            "Utah",
+            "Vermont", 
+            "Virginia", 
+            "Washington", 
+            "West Virginia", 
+            "Wisconsin", 
+            "Wyoming",
+            "Guam",
+            "Puerto Rico",
+            "Virgin Islands")
+
+df_states_diabetes <- cbind(State_name, df_states_diabetes)
+
+df_states_diabetes<-data.frame("Adults with Diabetes by state",S1[1], S1[2]*100, stringsAsFactors = FALSE)
+names(df_states_diabetes)<-c("Metric","State", "Value")
+
+S2 <- svyby(~prediab1, ~x.state, svey_prediab, svymean, na.rm=TRUE)

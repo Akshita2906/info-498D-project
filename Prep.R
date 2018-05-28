@@ -12,9 +12,9 @@ View(BRFSS_all_data)
 
 #--------------------------------------Health Care Access/knowledge -------------------------------------------------------
 
-unique(HCA_data$undrstnd)
+#unique(BRFSS_all_data$x.race.g1)
 #Picking up columns of choice
-vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state", "x.llcpwt", "undrstnd")
+vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state", "x.llcpwt", "undrstnd", "sex", "x.race.g1")
 HCA_data <- BRFSS_all_data[vars]
 #unique(HCA_data$x.rfhlth)
 
@@ -28,7 +28,7 @@ svey <- svydesign(ids=~1 ,strata=HCA_data$x.rfhlth, weights=HCA_data$x.llcpwt, n
 sveymean <- svymean(~x.rfhlth, svey, na.rm=TRUE)
 df_results<-data.frame("Adults with good or better health",sveymean[1]*100, stringsAsFactors = FALSE)
 names(df_results)<-c("Metric","Value")
-Z <- svyby(~x.rfhlth, ~x.state, svey, svymean, na.rm=TRUE)
+Z <- svyby(~x.rfhlth, ~sex+x.state+x.race.g1 , svey, svymean, na.rm=TRUE)
 
 #Storing the results into a dataframe for further use
 df_states<-data.frame("Adults with good health",Z[1], Z[2]*100, stringsAsFactors = FALSE)
@@ -48,9 +48,9 @@ sveymean <- svymean(~hlthpln1, svey, na.rm=TRUE)
 
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with health care coverage", sveymean[1]*100)
-Z <- svyby(~hlthpln1, ~x.state, svey, svymean, na.rm=TRUE)
-df_states<-data.frame("Adults with health care coverage",Z[1], Z[2]*100, stringsAsFactors = FALSE)
-names(df_states)<-c("Metric","State", "Value")
+Z <- svyby(~hlthpln1, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
+df_states <- data.frame("Adults with health care coverage",Z[1], Z[2]*100, stringsAsFactors = FALSE)
+#names(df_states)<-c("Metric","State", "Value")
 
 
 #Converting the values. Setting defaults for persdoc2 column
@@ -66,7 +66,7 @@ sveymean <- svymean(~persdoc2, svey, na.rm=TRUE)
 
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with personal doctor or health care provider", sveymean[1]*100)
-Z <- svyby(~persdoc2, ~x.state, svey, svymean, na.rm=TRUE)
+Z <- svyby(~persdoc2, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 df_states<-data.frame("Adults with health care service",Z[1], Z[2]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
@@ -82,7 +82,7 @@ svey_mean <- svymean(~medcost, svey, na.rm=TRUE)
 
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with no cost constraints", 100 - svey_mean[1]*100)
-Z <- svyby(~medcost, ~x.state, svey, svymean, na.rm=TRUE)
+Z <- svyby(~medcost, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 df_states<-data.frame("Adults with delay in healthcare due to cost",Z[1], Z[2]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
@@ -101,7 +101,7 @@ svey <- svydesign(ids=~1 ,strata=HCA_data$undrstnd, weights=HCA_data$undrstnd, n
 sveymean <- svymean(~undrstnd, svey, na.rm=TRUE)
 df_results<-data.frame("Adults who understand the language of medical professionals ",sveymean[1]*100, stringsAsFactors = FALSE)
 names(df_results)<-c("Metric","Value")
-Z <- svyby(~x.rfhlth, ~x.state, svey, svymean, na.rm=TRUE)
+Z <- svyby(~x.rfhlth, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 
 #Storing the results into a dataframe for further use
 df_states<-data.frame("Adults with good health",Z[1], Z[2]*100, stringsAsFactors = FALSE)

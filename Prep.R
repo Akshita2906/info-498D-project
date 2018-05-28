@@ -375,7 +375,7 @@ Y <- mutate(Y, ssbsugr2 = case_when(ssbsugr2 %in% 100:199~((ssbsugr2%%100)*7), s
 svey <- svydesign(ids=~1 ,strata=Y$ssbsugr2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_ssbpop <- svymean(~ssbsugr2, svey, na.rm=T)
-df_results[nrow(df_results) + 1,] = c("Adults drinking sugar sweetened soda", national_ssbpop[1]*100)
+df_results[nrow(df_results) + 1,] = c("Adults drinking sugar sweetened soda", national_ssbpop[1])
 
 state_ssbpop <- svyby(~ssbsugr2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbsugr2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
@@ -393,13 +393,13 @@ Y <- mutate(Y, ssbfrut2 = case_when(ssbfrut2 %in% 100:199~((ssbfrut2%%100)*7), s
 svey <- svydesign(ids=~1 ,strata=Y$ssbfrut2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_nonpop <- svymean(~ssbfrut2, svey, na.rm=T)
-df_results[nrow(df_results) + 1,] = c("Adults drinking sweetened non-soda beverages", national_nonpop[1]*100)
+df_results[nrow(df_results) + 1,] = c("Adults drinking sweetened non-soda beverages", national_nonpop[1])
 state_nonpop <- svyby(~ssbfrut2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbfrut2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
 write.csv(state_nonpop,"./data/sugar_nosoda_state.csv")
 write.csv(Z,"./data/sugar_nosoda_race.csv")
 #-------------------------------------------------------------------------------------
 
-df_results <- df_results[-c(10,11,15),]
+#df_results <- df_results[-c(12,13,14),]
 rownames(df_results) <- 1:nrow(df_results)
 write.csv(df_results,"./data/total_prevalence.csv")

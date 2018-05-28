@@ -7,7 +7,7 @@ library(tidyr)
 
 #Loading the data
 #BRFSS_all_data <- sasxport.get("data/LLCP2016XPT/LLCP2016.xpt")
-BRFSS_all_data <- sasxport.get("./data/LLCP2016.XPT")
+BRFSS_all_data <- sasxport.get("LLCP2016.XPT")
 View(BRFSS_all_data)
 
 #--------------------------------------Health Care Access/knowledge -------------------------------------------------------
@@ -112,7 +112,7 @@ HCA_data$undrstnd <- replace(HCA_data$undrstnd, HCA_data$undrstnd==9,NA)
 #Survey weights for undrstnd column 
 svey <- svydesign(ids=~1 ,strata=HCA_data$undrstnd, weights=HCA_data$undrstnd, nest=T, data=HCA_data)
 sveymean <- svymean(~undrstnd, svey, na.rm=TRUE)
-df_results<-data.frame("Adults who understand the language of medical professionals ",sveymean[1]*100, stringsAsFactors = FALSE)
+df_results[nrow(df_results) + 1,] = c("Adults who understand the language of medical professionals", sveymean[1]*100)
 names(df_results)<-c("Metric","Value")
 
 Z <- svyby(~undrstnd, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
@@ -146,12 +146,26 @@ HD_data %>% mutate(cvdstrk3 = case_when((cvdstrk3== 1)~1, (cvdstrk3 == 2)~0, (cv
 #Applying weights
 srvey_heart <- svydesign(ids=~1 ,strata=HD_data$cvdinfr4, weights=HD_data$x.llcpwt, nest=T, data=HD_data)
 srvey_mean_heart <- svymean(~cvdinfr4, srvey_heart, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults diagnosed with Heart Attack", srvey_mean_heart[1]*100)
+names(df_results)<-c("Metric","Value")
+
+
 srvey_coro <- svydesign(ids=~1 ,strata=HD_data$cvdcrhd4, weights=HD_data$x.llcpwt, nest=T, data=HD_data)
 srvey_mean_coro <- svymean(~cvdcrhd4, srvey_coro, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults diagnosed with Coronary Heart Disease", srvey_mean_coro[1]*100)
+names(df_results)<-c("Metric","Value")
+
+
 srvey_stroke <- svydesign(ids=~1 ,strata=HD_data$cvdstrk3, weights=HD_data$x.llcpwt, nest=T, data=HD_data)
 srvey_mean_stroke <- svymean(~cvdstrk3, srvey_stroke, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults diagnosed with a Stroke", srvey_mean_stroke[1]*100)
+names(df_results)<-c("Metric","Value")
+
+
 srvey_net<- svydesign(ids=~1 ,strata=HD_data$x.michd, weights=HD_data$x.llcpwt, nest=T, data=HD_data)
 srvey_mean_net <- svymean(~x.michd, srvey_net, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults diagnosed with CHD or MI", srvey_mean_net[1]*100)
+names(df_results)<-c("Metric","Value")
 
 weighted_stats <- c(srvey_mean_heart*100,srvey_mean_coro*100,srvey_mean_stroke*100, srvey_mean_net*100)
 net_means_heart <- data.frame(Cardiovascular = c("Heart Attack", "Coronary or Angial", "Stroke","Net Heart Disease"), Weighted = weighted_stats)
@@ -249,12 +263,16 @@ diab_data$prediab1[diab_data$prediab1==9] <- 0
 #Survey weights
 svey_daibete3 <- svydesign(ids=~1 ,strata=diab_data$diabete3, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
 svey_mean_daibete3 <- svymean(~diabete3, svey_daibete3, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults with diabetes", svey_mean_daibete3[1]*100)
+
 
 svey_diabage2 <- svydesign(ids=~1 ,strata=diab_data$diabage2, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
 svey_mean_diabage2 <- svymean(~diabage2, svey_diabage2, na.rm=TRUE)
 
+
 svey_prediab <- svydesign(ids=~1 ,strata=diab_data$prediab1, weights=diab_data$x.llcpwt, nest=T, data=diab_data)
 svey_mean_prediab <- svymean(~prediab1, svey_prediab, na.rm=TRUE)
+df_results[nrow(df_results) + 1,] = c("Adults with pre-diabetes", svey_mean_prediab[1]*100)
 
 weighted_stats_diab <- c(svey_mean_daibete3*100,svey_mean_prediab*100)
 net_means_diabetes <- data.frame(Diabetes = c("Diabetes","Pre-diabetes"), Weighted = weighted_stats_diab)
@@ -357,6 +375,8 @@ Y <- mutate(Y, ssbsugr2 = case_when(ssbsugr2 %in% 100:199~((ssbsugr2%%100)*7), s
 svey <- svydesign(ids=~1 ,strata=Y$ssbsugr2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_ssbpop <- svymean(~ssbsugr2, svey, na.rm=T)
+df_results[nrow(df_results) + 1,] = c("Adults drinking sugar sweetened soda", national_ssbpop[1]*100)
+
 state_ssbpop <- svyby(~ssbsugr2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbsugr2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
 write.csv(state_ssbpop,"./data/sugar_soda_state.csv")
@@ -373,8 +393,13 @@ Y <- mutate(Y, ssbfrut2 = case_when(ssbfrut2 %in% 100:199~((ssbfrut2%%100)*7), s
 svey <- svydesign(ids=~1 ,strata=Y$ssbfrut2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_nonpop <- svymean(~ssbfrut2, svey, na.rm=T)
+df_results[nrow(df_results) + 1,] = c("Adults drinking sweetened non-soda beverages", national_nonpop[1]*100)
 state_nonpop <- svyby(~ssbfrut2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbfrut2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
 write.csv(state_nonpop,"./data/sugar_nosoda_state.csv")
 write.csv(Z,"./data/sugar_nosoda_race.csv")
 #-------------------------------------------------------------------------------------
+
+df_results <- df_results[-c(10,11,15),]
+rownames(df_results) <- 1:nrow(df_results)
+write.csv(df_results,"./data/total_prevalence.csv")

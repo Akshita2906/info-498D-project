@@ -19,9 +19,10 @@ shinyUI(fluidPage(
       )),
     
     mainPanel(
-      plotOutput("result"),
+      plotOutput("result", width = 1100, height=650),
       textOutput("blank"),
-      plotOutput("result2")
+      plotlyOutput("result2", width = 1100, height=650),
+      textOutput("blank1")
     )
   )
 )) 

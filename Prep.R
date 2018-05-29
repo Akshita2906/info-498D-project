@@ -1,33 +1,37 @@
+#Downloading all relevant libraries
 library(Hmisc)
 library(foreign)
 library(survey)
 library(dplyr)
 library(tidyr)
 
-
-#Loading the data
+#Importing net BRFSS Data 
 #BRFSS_all_data <- sasxport.get("data/LLCP2016XPT/LLCP2016.xpt")
 BRFSS_all_data <- sasxport.get("LLCP2016.XPT")
 View(BRFSS_all_data)
+#BREAKING DOWN INTO SECTIONS
+#PARAMETER 1 - HEALTH CARE ACCESS AND HEALTH LITERACY
 
 #--------------------------------------Health Care Access/knowledge -------------------------------------------------------
 
 #unique(BRFSS_all_data$x.race.g1)
-#Picking up columns of choice
-vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state", "x.llcpwt", "undrstnd", "sex", "x.race.g1")
-HCA_data <- BRFSS_all_data[vars]
 #unique(HCA_data$x.rfhlth)
 
+#Picking up variables linked to healthcare access
+vars <- c("x.rfhlth", "hlthpln1", "persdoc2", "delaymed","medcost", "x.state", "x.llcpwt", "undrstnd", "sex", "x.race.g1")
+HCA_data <- BRFSS_all_data[vars]
 
 #Converting the values into yes and no. Setting defaults for x.rfhlth column
 HCA_data$x.rfhlth <- replace(HCA_data$x.rfhlth, HCA_data$x.rfhlth==2,0)
 HCA_data$x.rfhlth <- replace(HCA_data$x.rfhlth, HCA_data$x.rfhlth==9,NA)
 
-#Survey weights for x.rfhlth column 
+#Adding Survey weights for x.rfhlth column 
 svey <- svydesign(ids=~1 ,strata=HCA_data$x.rfhlth, weights=HCA_data$x.llcpwt, nest=T, data=HCA_data)
 sveymean <- svymean(~x.rfhlth, svey, na.rm=TRUE)
 df_results<-data.frame("Adults with good or better health",sveymean[1]*100, stringsAsFactors = FALSE)
 names(df_results)<-c("Metric","Value")
+
+#Weighing variables as per state and then by state,race and sex
 Z <- svyby(~x.rfhlth, ~sex+x.state+x.race.g1 , svey, svymean, na.rm=TRUE)
 Z_state <- svyby(~x.rfhlth, ~x.state , svey, svymean, na.rm=TRUE)
 Z_betterhealth_state <- Z_state
@@ -37,20 +41,20 @@ Z_betterhealth_race <- Z
 df_states<-data.frame("Adults with good health",Z[2], Z[4]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
-
-#Converting the values. Setting defaults for hlthpln1 column
+#Variable 2
+#Converting the values and Setting defaults for hlthpln1 column
 HCA_data$hlthpln1 <- replace(HCA_data$hlthpln1, HCA_data$hlthpln1 == 2,0)
 HCA_data$hlthpln1 <- replace(HCA_data$hlthpln1, HCA_data$hlthpln1 == 9,NA)
 HCA_data$hlthpln1 <- replace(HCA_data$hlthpln1, HCA_data$hlthpln1 == 7,NA)
 
-
-#Survey weights for hlthpln1 column
+#Adding Survey weights for hlthpln1 column
 svey <- svydesign(ids=~1 ,strata=HCA_data$hlthpln1, weights=HCA_data$x.llcpwt, nest=T, data=HCA_data)
 sveymean <- svymean(~hlthpln1, svey, na.rm=TRUE)
 
-
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with health care coverage", sveymean[1]*100)
+
+#Weighing variables as per state and then by state,race and sex
 Z <- svyby(~hlthpln1, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 Z_state<- svyby(~hlthpln1, ~x.state, svey, svymean, na.rm=TRUE)
 Z_healthcoverage_state <-Z_state
@@ -59,7 +63,7 @@ Z_healthcoverage_race<- Z
 df_states <- data.frame("Adults with health care coverage",Z[2], Z[4]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
-
+#variable 3
 #Converting the values. Setting defaults for persdoc2 column
 HCA_data$persdoc2 <- replace(HCA_data$persdoc2, HCA_data$persdoc2==2,1)
 HCA_data$persdoc2 <- replace(HCA_data$persdoc2, HCA_data$persdoc2==3,0)
@@ -70,9 +74,10 @@ HCA_data$persdoc2 <- replace(HCA_data$persdoc2, HCA_data$persdoc2==9,NA)
 svey <- svydesign(ids=~1 ,strata=HCA_data$persdoc2, weights=HCA_data$x.llcpwt, nest=T, data=HCA_data)
 sveymean <- svymean(~persdoc2, svey, na.rm=TRUE)
 
-
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with personal doctor or health care provider", sveymean[1]*100)
+
+#Weighing variables as per state and then by state,race and sex
 Z <- svyby(~persdoc2, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 Z_state <- svyby(~persdoc2, ~x.state, svey, svymean, na.rm=TRUE)
 Z_provider_state <- Z_state
@@ -81,25 +86,8 @@ df_states<-data.frame("Adults with health care service",Z[2], Z[4]*100, stringsA
 names(df_states)<-c("Metric","State", "Value")
 
 
-# #Converting the values. Setting defaults for medcost column
-# HCA_data$medcost <- replace(HCA_data$medcost, HCA_data$medcost==2,0)
-# HCA_data$medcost <- replace(HCA_data$medcost, HCA_data$medcost==7,NA)
-# HCA_data$medcost <- replace(HCA_data$medcost, HCA_data$medcost==9,NA)
-# 
-# #Survey weights for medcost column
-# svey <- svydesign(ids=~1 ,strata=HCA_data$medcost, weights=HCA_data$x.llcpwt, nest=T, data=HCA_data)
-# svey_mean <- svymean(~medcost, svey, na.rm=TRUE)
-# 
-# #Storing the results into a dataframe for further use
-# df_results[nrow(df_results) + 1,] = c("Adults with no cost constraints", 100 - svey_mean[1]*100)
-# Z <- svyby(~medcost, ~(sex+x.state+x.race.g1), svey, svymean, na.rm=TRUE)
-# Z_state <- svyby(~medcost, ~x.state, svey, svymean, na.rm=TRUE)
-# Z_medcost_state <- Z_state
-# Z_medcost_race <- Z
-# df_states<-data.frame("Adults with delay in healthcare due to cost",Z[2], Z[4]*100, stringsAsFactors = FALSE)
-# names(df_states)<-c("Metric","State", "Value")
-
-
+#PARAMETER 2
+#--------------------------------------Health Care Knowledge -------------------------------------------------------
 
 #Converting the values into yes and no. Setting defaults for undrstnd column
 HCA_data<- HCA_data[na.omit(HCA_data$undrstnd), ]
@@ -115,21 +103,29 @@ sveymean <- svymean(~undrstnd, svey, na.rm=TRUE)
 df_results[nrow(df_results) + 1,] = c("Adults who understand the language of medical professionals", sveymean[1]*100)
 names(df_results)<-c("Metric","Value")
 
+#Weighing variables as per state and then by state,race and sex
 Z <- svyby(~undrstnd, ~sex+x.state+x.race.g1, svey, svymean, na.rm=TRUE)
 Z_state <- svyby(~undrstnd, ~x.state, svey, svymean, na.rm=TRUE)
 Z_literacy_state<- Z_state
 Z_literacy_race <- Z
+
 #Storing the results into a dataframe for further use
 df_states<-data.frame("Adults with good health",Z[2], Z[4]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
+#Writing all variables into separate CSVs for further use
 Z_provider_state <- Z_provider_state %>% select(-x.state)
 Z_betterhealth_state <- Z_betterhealth_state %>% select(-x.state)
 Z_net_state <-(cbind(Z_healthcoverage_state,Z_provider_state,Z_betterhealth_state))
 Z_net_race <- cbind(Z_healthcoverage_race, Z_provider_race, Z_betterhealth_race)
 
+#Final CSVs for vizualizations
 write.csv(Z_net_race,"./data/healthcareaccess_race.csv")
 write.csv(Z_net_state,"./data/healthcareaccess_state.csv")
+
+
+#PARAMETER 3
+
 #--------------------------------Heart Disease------------------------------------------------------------------------
 
 #Picking up columns of choice
@@ -167,10 +163,12 @@ srvey_mean_net <- svymean(~x.michd, srvey_net, na.rm=TRUE)
 df_results[nrow(df_results) + 1,] = c("Adults diagnosed with CHD or MI", srvey_mean_net[1]*100)
 names(df_results)<-c("Metric","Value")
 
+#Saving net national means into a dataframe
 weighted_stats <- c(srvey_mean_heart*100,srvey_mean_coro*100,srvey_mean_stroke*100, srvey_mean_net*100)
 net_means_heart <- data.frame(Cardiovascular = c("Heart Attack", "Coronary or Angial", "Stroke","Net Heart Disease"), Weighted = weighted_stats)
 
 HD_data <- na.omit(HD_data)
+
 #Wrangling into state-wise weights for x.michd 
 H_state <- svyby(~x.michd, ~x.state, srvey_net, svymean, na.rm=TRUE)
 H <- svyby(~x.michd, ~x.race.g1+x.state , srvey_net, svymean, na.rm=TRUE)
@@ -207,9 +205,12 @@ names(df_states_heart_AC)<-c("Metric","State", "Value")
 H_net_state <- cbind(H_heartdisease_state,H_myo_state,H_stroke_state,H_ang_state)
 H_net_race <- cbind(H_heartdisease_race,H_myo_race,H_stroke_race,H_ang_race)
 
+#Writing into final CSVs for vizualization
 write.csv(H_net_race,"./data/heartdisease_race.csv")
 write.csv(H_net_state,"./data/heartdisease_state.csv")
 
+
+#PARAMETER 4
 
 #---------------------------------------------Obesity--------------------------------------------------------------------
 #Picking up columns of choice
@@ -231,15 +232,19 @@ options(survey.lonely.psu = "adjust")
 #Storing the results into a dataframe for further use
 df_results[nrow(df_results) + 1,] = c("Adults with obesity", svey_mean[1]*100)
 
+#Statewise wrangling as per state,sex and race
 O_state <- svyby(~x.rfbmi5, ~x.state, svey, svymean, na.rm=TRUE)
 O_race <- svyby(~x.rfbmi5, ~x.race.g1+x.state, svey, svymean, na.rm=TRUE)
 
 df_states<-data.frame("Adults with Obesity",O_race[2], O_race[4]*100, stringsAsFactors = FALSE)
 names(df_states)<-c("Metric","State", "Value")
 
+#Writing into final CSVs for vizualization
 write.csv(O_state,"./data/obesity_state.csv")
 write.csv(O_race,"./data/obesity_state.csv")
 
+
+#PARAMETER 5
 #---------------------------------------------Diabetes--------------------------------------------------------------------
 
 #Picking up columns of choice
@@ -277,8 +282,8 @@ df_results[nrow(df_results) + 1,] = c("Adults with pre-diabetes", svey_mean_pred
 weighted_stats_diab <- c(svey_mean_daibete3*100,svey_mean_prediab*100)
 net_means_diabetes <- data.frame(Diabetes = c("Diabetes","Pre-diabetes"), Weighted = weighted_stats_diab)
 
-#Wrangling into state-wise weights for diabete3 
 
+#Wrangling into state-wise weights for diabete3 
 D_state <- svyby(~diabete3, ~x.state, svey_daibete3, svymean, na.rm=TRUE)
 D_race <- svyby(~diabete3, ~x.race.g1+x.state+sex, svey_daibete3, svymean, na.rm=TRUE)
 df_states_diabetes<-data.frame("Adults with Diabetes by state",S1[1], S1[2]*100, stringsAsFactors = FALSE)
@@ -344,62 +349,109 @@ df_states_diabetes <- cbind(State_name, df_states_diabetes)
 df_states_diabetes<-data.frame("Adults with Diabetes by state",S1[1], S1[2]*100, stringsAsFactors = FALSE)
 names(df_states_diabetes)<-c("Metric","State", "Value")
 
-#S2 <- svyby(~prediab1, ~x.state, svey_prediab, svymean, na.rm=TRUE)
-
+#Writing into final CSVs for viz
 write.csv(D_state,"./data/diabetes_state.csv")
 write.csv(D_race,"./data/diabetes_race.csv")
 
+
+#PARAMETER 5
+
 #----------------------------------Pre-Diab-----------------------------------------------------------------
+#Loading data
 X <- BRFSS_all_data
+
+#Picking variables of choice and subsetting dataframe 
 Y <- subset(X, select=c("x.state", "prediab1", "x.llcpwt", "sex", "x.race.g1"))
+
+#Mutating variables and making them uniform
 Y <- mutate(Y, prediab1 = case_when(prediab1 %in% 1:2~1, prediab1== 3~0, prediab1 %in% 7:9~-1, is.na(prediab1)==T~-1))
 Y$prediab1[Y$prediab1==-1] <- NA
 Y <- na.omit(Y)
+
+#Survey weights
 svey <- svydesign(ids=~1 ,strata=Y$prediab1, weights=Y$x.llcpwt, nest=T, data=Y)
 national_prediabetic <- svymean(~prediab1, svey, na.rm=T)
+
+#Statewise wrangling into sex, race
 state_prediabetic <- svyby(~prediab1, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~prediab1, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
 
-
+#Writing into final CSVs for viz
 write.csv(state_prediabetic,"./data/prediabetes_state.csv")
 write.csv(Z,"./data/prediabetes_race.csv")
 
+#PARAMETER 6
+
 # ------------------------------------ Soda Pop ----------------------------------------------------
+#Loading data
 X <- BRFSS_all_data
+
+#Picking variables of choice and subsetting dataframe
 Y <- subset(X, select=c("x.state", "ssbsugr2", "x.llcpwt", "sex", "x.race.g1"))
+
+#Mutating variables and making them uniform
 Y$ssbsugr2[Y$ssbsugr2==777] <- NA 
 Y$ssbsugr2[Y$ssbsugr2==999] <- NA
 Y$ssbsugr2[Y$ssbsugr2==888] <- 0
 Y <- na.omit(Y)
+
+#Mutating daily,monthly and weekly variables to weekly
 Y <- mutate(Y, ssbsugr2 = case_when(ssbsugr2 %in% 100:199~((ssbsugr2%%100)*7), ssbsugr2 %in% 200:299~ssbsugr2%%200, ssbsugr2 %in% 300:399~((ssbsugr2%%300)/4), ssbsugr2==0~0))
+
+#survey weights
 svey <- svydesign(ids=~1 ,strata=Y$ssbsugr2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_ssbpop <- svymean(~ssbsugr2, svey, na.rm=T)
+
+#Adding results to dataframe
 df_results[nrow(df_results) + 1,] = c("Adults drinking sugar sweetened soda", national_ssbpop[1])
 
+#Statewise wrangling to state, race and sex
 state_ssbpop <- svyby(~ssbsugr2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbsugr2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
+
+#Writing into final CSVs for viz
 write.csv(state_ssbpop,"./data/sugar_soda_state.csv")
 write.csv(Z,"./data/sugar_soda_race.csv")
 
+
+#PARAMETER 7
+
 # -------------------------------------- SSB (Non Soda) -------------------------------------------
+#Loading data
 X <- BRFSS_all_data
+
+#Subsetting data and adding variables of interest
 Y <- subset(X, select=c("x.state", "ssbfrut2", "x.llcpwt", "sex", "x.race.g1"))
+
+#Mutating variables to make them uniform
 Y$ssbfrut2[Y$ssbfrut2==777] <- NA 
 Y$ssbfrut2[Y$ssbfrut2==999] <- NA
 Y$ssbfrut2[Y$ssbfrut2==888] <- 0
 Y <- na.omit(Y)
+
+#Mutating daily,monthly and weekly variables to weekly
 Y <- mutate(Y, ssbfrut2 = case_when(ssbfrut2 %in% 100:199~((ssbfrut2%%100)*7), ssbfrut2 %in% 200:299~ssbfrut2%%200, ssbfrut2 %in% 300:399~((ssbfrut2%%300)/4), ssbfrut2==0~0))
+
+#Survey weights
 svey <- svydesign(ids=~1 ,strata=Y$ssbfrut2, weights=Y$x.llcpwt, nest=T, data=Y)
 options(survey.lonely.psu = "adjust")
 national_nonpop <- svymean(~ssbfrut2, svey, na.rm=T)
+
+#Adding results to dataframe
 df_results[nrow(df_results) + 1,] = c("Adults drinking sweetened non-soda beverages", national_nonpop[1])
+
+#Statewise wrangling into race, sex and state
 state_nonpop <- svyby(~ssbfrut2, ~x.state, svey, svymean, na.rm=T)
 Z <- svyby(~ssbfrut2, ~x.state+sex+x.race.g1, svey, svymean, na.rm=T)
+
+#Writing into final CSVs for viz
 write.csv(state_nonpop,"./data/sugar_nosoda_state.csv")
 write.csv(Z,"./data/sugar_nosoda_race.csv")
-#-------------------------------------------------------------------------------------
 
+
+#-------------------------------------------------------------------------------------
+#EXTRA
 #df_results <- df_results[-c(12,13,14),]
 rownames(df_results) <- 1:nrow(df_results)
 write.csv(df_results,"./data/total_prevalence.csv")

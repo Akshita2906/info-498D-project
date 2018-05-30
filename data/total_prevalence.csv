@@ -1,14 +1,14 @@
-"","Metric","Value"
-"1","Adults with good or better health","82.0431503762922"
-"2","Adults with health care coverage","88.4719130869217"
-"3","Adults with personal doctor or health care provider","78.1148751523841"
-"4","Adults who understand the language of medical professionals","100"
-"5","Adults diagnosed with Heart Attack","8.64552350463207"
-"6","Adults diagnosed with Coronary Heart Disease","10.2088511581912"
-"7","Adults diagnosed with a Stroke","5.56281608092557"
-"8","Adults diagnosed with CHD or MI","6.67628001368776"
-"9","Adults with obesity","64.8175498741013"
-"10","Adults with diabetes","12.6225669934538"
-"11","Adults with pre-diabetes","12.3344539848395"
-"12","Adults drinking sugar sweetened soda","3.15842543934234"
-"13","Adults drinking sweetened non-soda beverages","2.63765441876591"
+,Metric,Variable,Value
+1,Adults with good or better health,x.rfhlth,82.04315038
+2,Adults with health care coverage,hlthpln1,88.47191309
+3,Adults with personal doctor or health care provider,persdoc2,78.11487515
+4,Adults who understand the language of medical professionals,undrstnd,100
+5,Adults diagnosed with Heart Attack,cvdinfr4,8.645523505
+6,Adults diagnosed with Coronary Heart Disease,cvdcrhd4,10.20885116
+7,Adults diagnosed with a Stroke,cvdstrk3,5.562816081
+8,Adults diagnosed with CHD or MI,x.michd,6.676280014
+9,Adults with obesity,x.rfbmi5,64.81754987
+10,Adults with diabetes,diabete3,12.62256699
+11,Adults with pre-diabetes,prediab1,12.33445398
+12,Adults drinking sugar sweetened soda,ssbsugr2,3.158425439
+13,Adults drinking sweetened non-soda beverages,ssbfrut2,2.637654419

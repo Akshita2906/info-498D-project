@@ -7,7 +7,10 @@ This brings us to the question, over a large and diverse country such as the Uni
 
 ## Existing Research:
 
-
+Existing research on Non-communicable disease suggest that NCD are now the leading cause of deaths and disability. In 2013, eight million people were killed because of this before their 16th birthday (Council on Foreign Relations, 2014). Chronic non-communicable diseases (NCDs) cause the majority of premature deaths, disability, and healthcare expenditures in the U.S. Six largely modifiable risk behaviors and factors (tobacco use, poor nutrition, physical inactivity, alcohol abuse, drug abuse, and poor mental health) account for more than 50% of premature mortality and considerably more morbidity and disability (American Journal of Preventive Medicine, 2014).
+Annually, seven of ten deaths are due to NCDs, and treating people with chronic conditions currently accounts for approximately 84% of annual healthcare expenditures ($2.7 trillion in 2011, or 17.9% of U.S. gross domestic product). Medical costs are driven by NCDs at all ages, yet 67% of healthcare dollars are spent on treating NCDs among working adults aged <65 years (American Journal of Preventive Medicine, 2014) 
+The NIH currently invests an estimated $2.2–2.6 billion in behavioral interventions to prevent NCDs, which comprises roughly 7%–9% of total annual expenditures.
+Physical inactivity has a major health impact on the world. Elimination of physical inactivity would remove between 6% and 10% of the major NCDs of CHD, type 2 diabetes, and breast and colon cancers, and increase life expectancy (David J. Hunter, 2013)
 
 ## Data:
 For the purposes of this research, we used the BRFSS (Behavioral Risk Factor Surveillance System) Dataset for the year 2016. Because of the extensive nature of the BRFSS questionnaire, we have utilized various parts of the data to narrow down on risk factors and pertinent data related to noncommunicable diseases of interest. The rationale behind choosing these specific factors was linked to the burgeoning upward trend in the prevalence of these disease. We will pay special attention to the weighing of variables -  keeping in mind the survey weights listed by the BRFSS in the dataset and how they apply to our data. We will be looking into primarily the following factors of interest:
@@ -32,7 +35,7 @@ Further we aim to suggest preventive public health initiatives for the states th
  
 ## Technical Description:
 
-The final product will be an interactive online resource compiled using Shiney App in R. For the purposes of this research, we used the BRFSS (Behavioral Risk Factor Surveillance System) Dataset for the year 2016. Because of the extensive nature of the BRFSS questionnaire, we have utilized various parts of the data to narrow down on risk factors and pertinent data related to noncommunicable diseases of interest. The rationale behind choosing these specific factors was linked to the burgeoning upward trend in the prevalence of these disease. We will pay special attention to the weighing of variables
+The final product will be an interactive online resource compiled using Shiny App in R. For the purposes of this research, we used the BRFSS (Behavioral Risk Factor Surveillance System) Dataset for the year 2016. Because of the extensive nature of the BRFSS questionnaire, we have utilized various parts of the data to narrow down on risk factors and pertinent data related to noncommunicable diseases of interest. The rationale behind choosing these specific factors was linked to the burgeoning upward trend in the prevalence of these disease. We will pay special attention to the weighing of variables
 Since neither of us have any experience in working with RShiny, one of our goals will also be to understand and express our findings appropriately in RShiny. Similarly, coming in with no experience of Interactive Visualization in R, we would also want to explore plotly and crosstalk in R to create interactive visualizations if time premits. 
  
 

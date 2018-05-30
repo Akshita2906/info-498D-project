@@ -1,0 +1,28 @@
+﻿Non-Communicable Diseases (NCDs) cause more than two-thirds (70%, around 40 million) of all annual deaths and are among the leading causes of preventable illness and related disability. Cardiovascular diseases, cancer, chronic respiratory diseases, and diabetes account for more than 80% of these deaths (WHO, n.d.).The growing burden of NCDs also exacts an economic cost, as people are less productive, work for fewer years, and die prematurely. If the current trend continues, NCDs are estimated to cause a cumulative loss of output of $47 trillion between 2011 and 2030 (Bloom, Sept. 2011.). Ischemic Heart Disease, Cerebrovascular Disease and Diabetes have been a consistent presence in the top 10 causes of Disability Adjusted Life Years (DALYs) in the 2005-2016-year bracket (Institue for Health Metrics and Evaluation, 2016). The primary risk factors contributing to these DALYs are all issues linked to a poor lifestyle and eating habits such as high body mass index, dietary risks, high blood pressure, high cholesterol etc. with high body mass index as the leading cause (Institue for Health Metrics and Evaluation, 2016). 
+This brings us to the question, over a large and diverse country such as the United States, are there certain areas which are more afflicted by these issues and hence require more immediate and stronger public health interventions and preventive measures. With the burgeoning trend of faulty eating habits and a sedentary lifestyle, heart disease, diabetes and obesity are being termed as 'silent killers' that plague our generation and are the top 10 burdens in the US and many other middle and high-income countries. We attempt to present our research to draw a comparative analysis between the "health" of these states in comparison to one another and to the national average to understand which region might be the one which needs an immediate implementation of strong preventive/reactive measures to reduce the burden of these diseases. This research can be analyzed by health officials on a national level to understand on a comparative basis how each region is faring in terms of risk factors and disease prevalence
+
+
+
+Pertinent questions that we attempt to answer with this exploratory analysis are:
+
+
+
+1.Analyzing the trends of noncommunicable diseases linked to lifestyle and eating behavior in the US
+2.Analyzing the risk factors and trend of disease prevalence in each state of the US
+3.Exploring how race and sex play a role in the prevalence of these diseases in every state
+For the purposes of this research, we used the BRFSS (Behavioral Risk Factor Surveillance System) Dataset for the year 2016. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world (BRFSS, n.d.). Because of the extensive nature of the BRFSS questionnaire, we have utilized various parts of the data to narrow down on risk factors and pertinent data related to noncommunicable diseases of interest.
+
+
+
+METHODOLOGY:
+
+
+
+BRFSS Data has rich detail on every participant’s health status wherein we can track and understand trends of the above risk factors with reference to one another. Questions asked in the survey for these chronic health indicators were (mostly) simple yes-no answers. These can then be analyzed to check what percentage of the population actually has been diagnosed with these symptoms or suffers from indicators. However, just taking a mean of all responses is a crude way of determining the true condition. When data is used without weights, each record counts the same as any other record-and this implies the following assumptions:
+•	Each record has equal probabilities of being selected.
+•	Noncoverage and nonresponse are equal among all segments of the population
+
+
+
+(BRFSS, n.d.). During data collection, the conditions that actually happen may be different than the preceding assumptions, and the differences can become large enough to affect the results of the data set. Weighting each record appropriately can help to adjust for these differences (or assumption violations). Thus, the BRFSS survey appropriately weights the variables accounting for all these factors using various calculated variables such as geographic strata, density strata, age etc. This final weight is calculated and is used to weigh all variables correspondingly. We have weighed all our variables as per the final calculated weight specified by the BRFSS.
+Our methodology to understand these trends on a statewide basis started with identification of variables pertinent to each health condition and risk factor. On identification of the variables of our choice, we segregated them into categories based on the above. We followed this up with analyzing weighted cumulative national averages for each condition and comparing these with reference to each other. We then broke down these individual conditions into their state-wise components with appropriate weighting by creating survey designs. To further analyze conditions and to understand trends on a demographic level, created survey designs to categorize each variable into races and genders in each state with appropriate weighting. This gave a comprehensive picture about the above risk factors and health conditions in all the states with a flexible level of granularity

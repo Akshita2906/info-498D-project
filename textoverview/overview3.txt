@@ -1,0 +1,5 @@
+﻿Pertinent questions that we attempt to answer with this exploratory analysis is
+1.Analyzing the trends of noncommunicable diseases linked to lifestyle and eating behavior in the US
+2.Analyzing the risk factors and trend of disease prevalence in each state of the US
+3.Exploring how race and sex play a role in the prevalence of these diseases in every state
+For the purposes of this research, we used the BRFSS (Behavioral Risk Factor Surveillance System) Dataset for the year 2016. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world (BRFSS, n.d.). Because of the extensive nature of the BRFSS questionnaire, we have utilized various parts of the data to narrow down on risk factors and pertinent data related to noncommunicable diseases of interest.
